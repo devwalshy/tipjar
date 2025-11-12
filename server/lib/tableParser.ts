@@ -74,7 +74,7 @@ export function parseStarbucksReport(ocrText: string): ParseResult {
       continue;
     }
     
-    // Special case 1: Multi-line format from OCR responses
+    // Special case 1: Multi-line format from Azure Document Intelligence
     // Line 1: Store number (69600)
     // Line 2: Name (Lastname, Firstname M :unselected:)
     // Line 3: Partner ID (US12345678)
@@ -152,7 +152,7 @@ export function parseStarbucksReport(ocrText: string): ParseResult {
     }
   }
   
-  // Remove duplicates (OCR may return table rows multiple times)
+  // Remove duplicates (Azure Document Intelligence returns data twice: table + full text)
   // Keep the first occurrence of each partner name
   const uniquePartners: PartnerData[] = [];
   const seenNames = new Set<string>();

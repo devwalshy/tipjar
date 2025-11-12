@@ -3,9 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
 import { analyzeImageWithService } from "./lib/ocrService";
-import { formatOCRResult } from "../src/utils/formatUtils";
-import { calculatePayout } from "../src/utils/utils";
-import { roundAndCalculateBills } from "../src/utils/billCalc";
+import { formatOCRResult } from "../client/src/lib/formatUtils";
+import { calculatePayout } from "../client/src/lib/utils";
+import { roundAndCalculateBills } from "../client/src/lib/billCalc";
 import { partnerHoursSchema } from "@shared/schema";
 
 // Setup file uploads
@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No image file provided" });
       }
       
-      // Use OCR service (Azure Document Intelligence primary, Tesseract fallback)
+      // Use OCR service (Azure primary, Tesseract fallback)
       const result = await analyzeImageWithService(req.file.buffer);
       
       if (!result.text || !result.partnerData || result.partnerData.length === 0) {

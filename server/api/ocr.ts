@@ -1,11 +1,9 @@
 /**
  * OCR API implementation with multiple engine support
- * Supports: Azure Document Intelligence (primary), Tesseract (fallback)
+ * Supports: Azure Computer Vision (primary), Tesseract (fallback)
  */
 
 import { analyzeImageWithService, OCREngine } from '../lib/ocrService';
-import { preprocessImage } from '../lib/imagePreprocessor';
-import { performOCR } from '../lib/ocrConfig';
 
 interface OCRResult {
   text: string | null;
@@ -24,25 +22,24 @@ interface OCRResult {
 export async function analyzeImage(imageBuffer: Buffer, engine?: OCREngine): Promise<OCRResult> {
   try {
     console.log('Starting OCR analysis...');
-
+    
+    // Get OCR engine from environment or use parameter
     const selectedEngine: OCREngine = engine || (process.env.OCR_ENGINE as OCREngine) || 'auto';
     console.log(`Selected OCR engine: ${selectedEngine}`);
-
+    
+    // Use OCR service layer
     const result = await analyzeImageWithService(imageBuffer, selectedEngine);
-
+    
     if (result.partnerData && result.partnerData.length > 0) {
-      console.log(
-        `OCR successful with ${result.engine}: ${result.partnerData.length} partners extracted`
-      );
+      console.log(`OCR successful with ${result.engine}: ${result.partnerData.length} partners extracted`);
       return result;
     }
-
+    
+    // If no good results, return error
     console.log('OCR failed to extract partner data');
     return {
       text: result.text,
-      error:
-        result.error ||
-        'Could not extract partner information from the image. Please ensure the image is clear and shows the Tip Distribution Report table.',
+      error: result.error || 'Could not extract partner information from the image. Please ensure the image is clear and shows the Tip Distribution Report table.',
       engine: result.engine,
     };
   } catch (error) {
@@ -61,24 +58,16 @@ export async function analyzeImage(imageBuffer: Buffer, engine?: OCREngine): Pro
  */
 export async function extractTextOnly(imageBuffer: Buffer): Promise<{ text: string | null; error?: string }> {
   try {
-    const azureResult = await analyzeImageWithService(imageBuffer, 'azure');
-
-    if (azureResult.text && azureResult.text.trim().length > 0) {
-      return azureResult.error
-        ? { text: azureResult.text, error: azureResult.error }
-        : { text: azureResult.text };
-    }
-
     const processedBuffer = await preprocessImage(imageBuffer);
     const text = await performOCR(processedBuffer);
-
+    
     if (!text || text.trim().length === 0) {
       return {
         text: null,
         error: 'No text could be extracted from the image',
       };
     }
-
+    
     return { text };
   } catch (error) {
     console.error('Text extraction error:', error);
@@ -88,3 +77,4 @@ export async function extractTextOnly(imageBuffer: Buffer): Promise<{ text: stri
     };
   }
 }
+

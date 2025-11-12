@@ -1,0 +1,119 @@
+Instructions for Replit Agent:
+
+I want to enhance the polish and professionalism of my current React.js project’s UI to conform to Google’s Material 3 design system while maintaining the existing project structure, functionality, and frontend dependencies. The project uses React 19.1.0, `@vitejs/plugin-react`, `wouter` for routing, `framer-motion` for animations, `@radix-ui/react-*` components for UI elements, and `class-variance-authority`, `clsx`, and `tailwind-merge` for CSS class handling with Tailwind CSS. Please follow these steps:
+
+1. **Preserve Structure and Functionality**:
+   - Do not modify the file hierarchy (e.g., `src/`, `components/`, `pages/`).
+   - Preserve existing functionality, including `wouter` routing logic and backend interactions.
+   - Only update UI-related code (JSX, Tailwind classes, Radix UI components, Framer Motion animations) to align with Material 3.
+
+2. **Configure Tailwind for Material 3**:
+   - Update `tailwind.config.js` to include a Material 3 color palette (primary, secondary, tertiary, surface, etc.) with WCAG 2.1 AA-compliant contrast ratios. Example:
+     - Primary: #3F51B5 (Indigo 500)
+     - Secondary: #F50057 (Pink A400)
+     - Surface: #FFFFFF
+     - On-Surface: #1C2526
+   - Add Roboto or Noto Sans fonts to `tailwind.config.js` with a scalable type scale (e.g., headline, body, caption).
+   - Define custom border-radius values (e.g., 8px, 12px) for Material 3 shapes.
+   - Add a comment in `tailwind.config.js` explaining Material 3 design tokens.
+
+3. **Style Radix UI Components for Material 3**:
+   - Use `class-variance-authority` (CVA) to define Material 3 variants for Radix UI components (e.g., `@radix-ui/react-button`, `@radix-ui/react-dialog`, `@radix-ui/react-navigation-menu`).
+   - Apply Tailwind classes via `clsx` and `tailwind-merge` to style components:
+     - **Buttons**: Create filled, outlined, and elevated button variants with ripple effects (using Framer Motion), rounded corners (8px), and Material 3 colors.
+     - **Cards**: Style `@radix-ui/react-card` with elevated or outlined variants, shadows, and rounded corners (12px).
+     - **Navigation**: Enhance `@radix-ui/react-navigation-menu` or similar with Material 3 navigation bar/drawer styles, including icons and hierarchy.
+     - **Forms**: Update `@radix-ui/react-form` or text inputs with Material 3 text field styles (labels, icons, validation feedback).
+     - **Dialogs**: Style `@radix-ui/react-dialog` with Material 3 modal designs (more padding, prominent headlines).
+   - Add comments in component files explaining Material 3 alignment.
+
+4. **Implement Material 3 Principles**:
+   - **Dynamic Color**: Use Tailwind’s color variables for a Material 3 palette. If feasible, add a theme toggle (light/dark) using React state to switch between Material 3 color schemes.
+   - **Responsive Grid**: Use Tailwind’s grid utilities (e.g., `grid grid-cols-12 gap-4`) for a 12-column layout. Ensure consistent spacing (8dp or 16dp increments) and adaptability for mobile (360px+), tablet (600px+), and desktop (1024px+).
+   - **Typography**: Apply Tailwind’s font utilities (e.g., `font-roboto`, `text-headline-medium`) for a Material 3 type scale. Ensure legibility across devices.
+   - **Shapes**: Use Tailwind’s `rounded-md` or custom radius classes for buttons, cards, and containers, maintaining consistency.
+   - **Motion**: Use `framer-motion` for Material 3 animations:
+     - Button presses: 200ms ripple effect.
+     - Page transitions: 300ms fade or slide (via `wouter` route changes).
+     - Hover effects: Subtle scale or elevation changes.
+   - **Accessibility**:
+     - Ensure color contrasts meet WCAG 2.1 AA (e.g., 4.5:1 for text).
+     - Add ARIA labels to Radix UI components (e.g., `aria-label` for buttons).
+     - Ensure touch targets are 48x48px or larger.
+     - Test screen-reader compatibility.
+
+5. **Code Quality**:
+   - Add comments in JSX and CSS files to explain Material 3 changes (e.g., “Applied Material 3 filled button style”).
+   - Organize Tailwind classes using `clsx` and `tailwind-merge` for clarity.
+   - Optimize for performance by minimizing unused Tailwind classes (leverage Vite’s tree-shaking).
+
+6. **Test Responsiveness**:
+   - Ensure the UI adapts to screen sizes (mobile: 360px+, tablet: 600px+, desktop: 1024px+).
+   - Test in Replit’s preview mode and confirm layout consistency.
+
+7. **Respect Dependencies**:
+   - Do not add new libraries (e.g., `@mui/material`) unless explicitly required.
+   - Use existing dependencies: React 19.1.0, `wouter`, `framer-motion`, `@radix-ui/react-*`, `class-variance-authority`, `clsx`, `tailwind-merge`.
+   - Ensure Vite configuration (`vite.config.js`) remains compatible.
+
+Example Actions:
+- In `tailwind.config.js`, add:
+  ```js
+  module.exports = {
+    theme: {
+      extend: {
+        colors: {
+          'md-primary': '#3F51B5',
+          'md-secondary': '#F50057',
+          'md-surface': '#FFFFFF',
+          'md-on-surface': '#1C2526',
+        },
+        fontFamily: {
+          roboto: ['Roboto', 'sans-serif'],
+        },
+        borderRadius: {
+          'md': '8px',
+          'lg': '12px',
+        },
+      },
+    },
+  };
+  ```
+- In a button component (e.g., `Button.jsx`):
+  ```jsx
+  import { cva } from 'class-variance-authority';
+  import { motion } from 'framer-motion';
+  import { cn } from '../utils'; // Assuming cn uses clsx/tailwind-merge
+
+  const buttonVariants = cva(
+    'inline-flex items-center justify-center font-roboto rounded-md',
+    {
+      variants: {
+        variant: {
+          filled: 'bg-md-primary text-white hover:bg-opacity-90',
+          outlined: 'border border-md-primary text-md-primary',
+        },
+      },
+    }
+  );
+
+  const Button = ({ variant = 'filled', children, ...props }) => (
+    <motion.button
+      className={cn(buttonVariants({ variant }))}
+      whileTap={{ scale: 0.95 }}
+      {...props}
+    >
+      {children}
+    </motion.button>
+  );
+  ```
+- In a page component, use a responsive grid:
+  ```jsx
+  <div className="grid grid-cols-12 gap-4 p-4">
+    <div className="col-span-12 md:col-span-6 lg:col-span-4">
+      <Card className="bg-md-surface rounded-lg shadow-md" />
+    </div>
+  </div>
+  ```
+
+Please apply these changes and provide a summary of the files modified, components updated, and Material 3 features implemented. If clarification is needed (e.g., specific components to prioritize), let me know before proceeding.

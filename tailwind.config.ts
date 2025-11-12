@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       borderRadius: {
@@ -44,49 +44,59 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        brand: {
-          forest: "hsl(var(--brand-forest))",
-          pine: "hsl(var(--brand-pine))",
-          latte: "hsl(var(--brand-latte))",
-          cream: "hsl(var(--brand-cream))",
-          sky: "hsl(var(--brand-sky))",
-        },
-        surface: {
-          DEFAULT: "hsl(var(--surface))",
-          subtle: "hsl(var(--surface-subtle))",
-          strong: "hsl(var(--surface-strong))",
-        },
-        text: {
-          default: "hsl(var(--text-default))",
-          muted: "hsl(var(--text-muted))",
-          onDark: "hsl(var(--text-on-dark))",
-        },
+        
+        // Spring colors
+        "spring-green": "hsl(var(--spring-green))",
+        "spring-blue": "hsl(var(--spring-blue))",
+        "spring-lavender": "hsl(var(--spring-lavender))",
+        "spring-pink": "hsl(var(--spring-pink))",
+        "spring-yellow": "hsl(var(--spring-yellow))",
+        "spring-peach": "hsl(var(--spring-peach))",
+        "spring-accent": "hsl(var(--spring-accent))",
+        "app-bg": "hsl(var(--app-bg))",
+        "app-darker": "hsl(var(--app-darker))",
+        "app-card": "hsl(var(--app-card))",
+        "text-white": "hsl(var(--text-white))",
+        
         chart: {
-          1: "hsl(var(--chart-1))",
-          2: "hsl(var(--chart-2))",
-          3: "hsl(var(--chart-3))",
-          4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))",
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
         },
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        "card-fade": {
-          from: { opacity: "0", transform: "translateY(12px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "card-fade": "card-fade 320ms ease-out",
       },
     },
   },

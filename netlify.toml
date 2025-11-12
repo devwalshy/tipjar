@@ -5,8 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  # Ensure devDependencies like Vite install when NODE_ENV=production on Netlify
-  NPM_FLAGS = "--legacy-peer-deps --include=optional --include=dev"
+  NPM_FLAGS = "--legacy-peer-deps --include=optional"
 
 # Redirect all API requests to the serverless function
 [[redirects]]
@@ -37,7 +36,6 @@
 # Function settings for longer execution time (needed for OCR processing)
 [functions]
   node_bundler = "esbuild"
-  directory = "netlify/functions"
   
 [functions."api"]
   included_files = ["eng.traineddata"]

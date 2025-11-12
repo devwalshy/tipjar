@@ -14,13 +14,13 @@ export function log(message: string, source = "express") {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  const distPath = path.resolve(import.meta.dirname, "public");
 
   if (!fs.existsSync(distPath)) {
     log(`Build directory not found: ${distPath}. Serving API only.`);
     // Just serve a simple message for API-only mode
     app.use("*", (_req, res) => {
-      res.json({ message: "Tip Steward API is running" });
+      res.json({ message: "TipJar API is running" });
     });
     return;
   }

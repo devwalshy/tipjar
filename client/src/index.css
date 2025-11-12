@@ -1,0 +1,539 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Main color variables */
+  --app-bg: 180 25% 25%;           /* #2F4F4F - main background */
+  --app-card: 180 22% 30%;         /* #3A5C5C - card background */
+  --app-darker: 180 30% 17%;       /* #1E3535 - header/footer background */
+  --app-input: 180 35% 25%;        /* #364949 - input background */
+  --app-border: 180 20% 35%;       /* #4C6767 - border color */
+  
+  /* Text colors */
+  --text-white: 0 0% 96%;          /* #F5F5F5 - primary text */
+  --text-yellow: 35 100% 92%;      /* #FFEED6 - accent text */
+  --text-gray: 0 0% 75%;           /* #BFBFBF - muted text */
+  
+  /* Accent colors */
+  --spring-green: 120 70% 75%;     /* #93EC93 - primary accent */
+  --spring-blue: 196 63% 77%;      /* #9FD6E9 - secondary accent */
+  --spring-accent: 340 60% 67%;    /* #DD7895 - highlight accent */
+  --spring-lavender: 280 47% 79%;  /* #D2B0E3 - tertiary accent */
+  
+  /* ShadCN UI variables */
+  --background: 180 25% 25%;       /* #2F4F4F - app-bg */
+  --foreground: 0 0% 96%;          /* #F5F5F5 - text-white */
+  
+  --card: 180 22% 30%;             /* #3A5C5C - app-card */
+  --card-foreground: 0 0% 96%;     /* #F5F5F5 - text-white */
+  
+  --popover: 180 22% 30%;          /* #3A5C5C - app-card */
+  --popover-foreground: 0 0% 96%;  /* #F5F5F5 - text-white */
+  
+  --primary: 120 70% 75%;          /* #93EC93 - spring-green */
+  --primary-foreground: 180 35% 25%; /* #364949 - app-input */
+  
+  --secondary: 35 100% 92%;        /* #FFEED6 - text-yellow */
+  --secondary-foreground: 180 30% 17%; /* #1E3535 - app-darker */
+  
+  --muted: 180 20% 30%;            /* #3C5D5D - slightly lighter than app-card */
+  --muted-foreground: 0 0% 75%;    /* #BFBFBF - text-gray */
+  
+  --accent: 340 60% 67%;           /* #DD7895 - spring-accent */
+  --accent-foreground: 0 0% 96%;   /* #F5F5F5 - text-white */
+  
+  --destructive: 0 84% 60%;        /* Red for destructive actions */
+  --destructive-foreground: 0 0% 96%; /* #F5F5F5 - text-white */
+  
+  --border: 180 20% 35%;           /* #4C6767 - app-border */
+  --input: 180 35% 25%;            /* #364949 - app-input */
+  --ring: 120 70% 75%;             /* #93EC93 - spring-green */
+  
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-[#2f4f4f] text-[#f5f5f5];
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+@layer components {
+  /* Navigation */
+  .nav-link {
+    @apply text-gray-400 p-3 px-4 border-b border-transparent transition-colors duration-150 ease-in-out;
+  }
+  
+  .nav-link-active {
+    @apply text-white font-semibold p-3 px-4 border-b border-white;
+  }
+  
+  /* Dropzone */
+  .dropzone {
+    @apply border-[1.11111px] border-dashed border-[rgba(147,236,147,0.5)] rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ease-in-out bg-[#3c5d5d];
+  }
+  
+  .dropzone.active {
+    @apply border-[#93ec93] bg-[#93ec93] bg-opacity-10;
+  }
+  
+  /* Input and Label */
+  .input-label {
+    @apply mb-1 block text-sm font-medium text-gray-400;
+  }
+  
+  .input-field {
+    @apply h-10 w-full bg-[#364949] text-[#f5f5f5] border-[1.11111px] border-[#415858] rounded-md py-2 px-3;
+  }
+  
+  .input-field-dollar {
+    @apply pl-8;
+  }
+  
+  /* Buttons */
+  .btn {
+    @apply inline-flex h-10 justify-center gap-2 whitespace-nowrap text-sm font-medium rounded-md px-4 py-2 transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-[#93ec93] text-[#364949] hover:bg-opacity-90;
+  }
+  
+  .btn-secondary {
+    @apply bg-[#9fd6e9] text-[#364949] hover:bg-opacity-90;
+  }
+  
+  .btn-accent {
+    @apply bg-[#dd7895] text-[#364949] hover:bg-opacity-90;
+  }
+  
+  .btn-lavender {
+    @apply bg-[#d2b0e3] text-[#1e3838] hover:bg-opacity-90;
+  }
+  
+  .btn-transparent {
+    @apply bg-transparent border border-[#4c6767] text-[#f5f5f5] hover:bg-[#364949];
+  }
+  
+  .btn-full {
+    @apply w-full;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-[#3c5d5d] text-[#f5f5f5] shadow-sm border-[1.11111px] border-[#4c6767] rounded-lg overflow-hidden;
+  }
+  
+  .card-header {
+    @apply p-6 bg-[#1e3535] flex items-center justify-between rounded-t-lg;
+  }
+  
+  .card-body {
+    @apply p-6 bg-[#3a5c5c];
+  }
+  
+  .card-footer {
+    @apply p-6 bg-[#1e3535] flex items-center rounded-b-lg;
+  }
+  
+  .summary-box {
+    @apply bg-[#3c5d5d] rounded-lg p-4;
+  }
+  
+  .summary-label {
+    @apply text-sm text-[#ffeed6] m-0 mb-1;
+  }
+  
+  .summary-value {
+    @apply text-2xl font-bold text-[#f5f5f5] m-0;
+  }
+  
+  .summary-value-blue {
+    @apply text-2xl font-bold text-[#9fd6e9] m-0;
+  }
+  
+  .summary-value-accent {
+    @apply text-2xl font-bold text-[#dd7895] m-0;
+  }
+  
+  /* Utilities */
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .divider-with-text {
+    @apply flex items-center justify-between;
+  }
+  
+  .divider-with-text::before,
+  .divider-with-text::after {
+    @apply h-[0.989583px] flex-grow bg-transparent;
+    content: "";
+  }
+  
+  .divider-text {
+    @apply px-4 text-gray-400;
+  }
+  
+  /* Animations */
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-fadeUp {
+    animation: fadeUp 0.4s ease-out;
+  }
+  
+  .animate-scaleIn {
+    animation: scaleIn 0.3s ease-out;
+  }
+  
+  .animate-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.4s ease-out;
+  }
+  
+  .animate-bounce {
+    animation: bounce 1s ease-in-out;
+  }
+  
+  /* Modern UI Classes */
+  .glass-effect {
+    background: rgba(58, 92, 92, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .shadow-soft {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  .gradient-border {
+    position: relative;
+    border-radius: 0.25rem;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 0.3rem;
+    background: linear-gradient(45deg, #93EC93, #9FD6E9, #DD7895);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    z-index: -1;
+  }
+  
+  .shimmer {
+    background: linear-gradient(to right, rgba(147, 236, 147, 0.1) 8%, rgba(147, 236, 147, 0.2) 18%, rgba(147, 236, 147, 0.1) 33%);
+    background-size: 800px 104px;
+    animation: shimmer 1.5s infinite linear;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+@keyframes slideInRight {
+  from { 
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Responsive adjustments */
+/* Tablet Styles */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.95rem;
+  }
+  
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .summary-box {
+    padding: 0.75rem;
+  }
+  
+  .summary-value, .summary-value-blue, .summary-value-accent {
+    font-size: 1.25rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-footer {
+    padding: 0.75rem 1rem;
+  }
+  
+  h1, h2 {
+    font-size: 1.25rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Make grids stack on tablet */
+  .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Make summary boxes grid for tablets */
+  .grid-cols-1.sm\\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  
+  /* Adjust partner cards for tablet */
+  .grid-cols-1.sm\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+  
+  body {
+    font-size: 0.875rem;
+  }
+  
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .card {
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+  
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  .card-footer {
+    padding: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+  }
+  
+  /* Single column layout for mobile */
+  .grid-cols-1.sm\\:grid-cols-3,
+  .grid-cols-1.sm\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  /* Summary boxes on mobile */
+  .summary-box {
+    padding: 0.625rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-value, .summary-value-blue, .summary-value-accent {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+  
+  .summary-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Input field adjustments */
+  .input-field {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    height: 2.5rem;
+  }
+  
+  .input-field-dollar {
+    padding-left: 1.5rem;
+  }
+  
+  /* Smaller icons on mobile */
+  svg.h-5 {
+    height: 1rem !important;
+    width: 1rem !important;
+  }
+  
+  svg.h-4 {
+    height: 0.875rem !important;
+    width: 0.875rem !important;
+  }
+  
+  /* Adjust spacing for mobile to be more compact but still readable */
+  .mt-8 {
+    margin-top: 1.25rem;
+  }
+  
+  .mb-6 {
+    margin-bottom: 1rem;
+  }
+  
+  .gap-6 {
+    gap: 0.75rem;
+  }
+  
+  /* Make dropzone more compact but still visible */
+  .gradient-border.mb-6 {
+    min-height: 180px !important;
+    padding: 1rem !important;
+  }
+  
+  /* Smaller text in cards */
+  h3.text-lg, .text-lg {
+    font-size: 0.9375rem;
+    line-height: 1.25;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Header adjustments */
+  header.animate-fadeIn {
+    padding: 0.625rem 0;
+  }
+  
+  header h1.text-xl {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Button adjustments */
+  button {
+    min-height: 2.5rem;
+  }
+  
+  /* File dropzone optimizations */
+  .file-dropzone-btn {
+    padding: 0.5rem 1rem !important;
+    height: auto !important;
+  }
+  
+  /* Responsive calculations */
+  .formula-item {
+    padding: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* Zoom out slightly on small screens for better overall view */
+  @media (max-width: 380px) {
+    html {
+      font-size: 14px;
+    }
+    
+    body {
+      zoom: 0.95;
+    }
+    
+    .card {
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-body {
+      padding: 0.625rem;
+    }
+    
+    .gradient-border.mb-6 {
+      min-height: 160px !important;
+    }
+  }
+}
