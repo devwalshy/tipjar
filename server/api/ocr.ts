@@ -1,6 +1,6 @@
 /**
  * OCR API implementation with multiple engine support
- * Supports: Mindee OCR (primary), Tesseract (fallback)
+ * Supports: Azure Document Intelligence (primary), Tesseract (fallback)
  */
 
 import { analyzeImageWithService, OCREngine } from '../lib/ocrService';
@@ -24,24 +24,25 @@ interface OCRResult {
 export async function analyzeImage(imageBuffer: Buffer, engine?: OCREngine): Promise<OCRResult> {
   try {
     console.log('Starting OCR analysis...');
-    
-    // Get OCR engine from environment or use parameter
+
     const selectedEngine: OCREngine = engine || (process.env.OCR_ENGINE as OCREngine) || 'auto';
     console.log(`Selected OCR engine: ${selectedEngine}`);
-    
-    // Use OCR service layer
+
     const result = await analyzeImageWithService(imageBuffer, selectedEngine);
-    
+
     if (result.partnerData && result.partnerData.length > 0) {
-      console.log(`OCR successful with ${result.engine}: ${result.partnerData.length} partners extracted`);
+      console.log(
+        `OCR successful with ${result.engine}: ${result.partnerData.length} partners extracted`
+      );
       return result;
     }
-    
-    // If no good results, return error
+
     console.log('OCR failed to extract partner data');
     return {
       text: result.text,
-      error: result.error || 'Could not extract partner information from the image. Please ensure the image is clear and shows the Tip Distribution Report table.',
+      error:
+        result.error ||
+        'Could not extract partner information from the image. Please ensure the image is clear and shows the Tip Distribution Report table.',
       engine: result.engine,
     };
   } catch (error) {
@@ -60,16 +61,14 @@ export async function analyzeImage(imageBuffer: Buffer, engine?: OCREngine): Pro
  */
 export async function extractTextOnly(imageBuffer: Buffer): Promise<{ text: string | null; error?: string }> {
   try {
-    // Try Mindee first for higher accuracy text extraction
-    const mindeeResult = await analyzeImageWithService(imageBuffer, 'mindee');
+    const azureResult = await analyzeImageWithService(imageBuffer, 'azure');
 
-    if (mindeeResult.text && mindeeResult.text.trim().length > 0) {
-      return mindeeResult.error
-        ? { text: mindeeResult.text, error: mindeeResult.error }
-        : { text: mindeeResult.text };
+    if (azureResult.text && azureResult.text.trim().length > 0) {
+      return azureResult.error
+        ? { text: azureResult.text, error: azureResult.error }
+        : { text: azureResult.text };
     }
 
-    // Fallback to Tesseract if Mindee failed to return text
     const processedBuffer = await preprocessImage(imageBuffer);
     const text = await performOCR(processedBuffer);
 
@@ -89,4 +88,3 @@ export async function extractTextOnly(imageBuffer: Buffer): Promise<{ text: stri
     };
   }
 }
-

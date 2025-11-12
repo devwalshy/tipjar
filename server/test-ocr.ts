@@ -18,7 +18,7 @@ async function testOCR() {
   const assetsDir = path.join(__dirname, '..', 'attached_assets');
   
   if (!fs.existsSync(assetsDir)) {
-    console.error('attached_assets directory not found');
+    console.warn('No attached_assets directory found; skipping sample OCR tests.');
     return;
   }
   
