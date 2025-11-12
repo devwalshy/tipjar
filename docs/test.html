@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TipJar Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #93EC93;
+      color: #364949;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      margin: 5px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 5px;
+    }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🧪 TipJar Test Page</h1>
+  <p>Use this page to test the TipJar functionality before deploying.</p>
+
+  <div class="test-section">
+    <h2>Test 1: Calculate Distribution</h2>
+    <p>Test the tip distribution calculation with sample data.</p>
+    <button onclick="testCalculation()">Run Test</button>
+    <div id="test1-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 2: Bill Breakdown</h2>
+    <p>Test the bill breakdown algorithm.</p>
+    <button onclick="testBillBreakdown()">Run Test</button>
+    <div id="test2-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 3: Hourly Rate Calculation</h2>
+    <p>Test the hourly rate truncation logic.</p>
+    <button onclick="testHourlyRate()">Run Test</button>
+    <div id="test3-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Ready to Deploy?</h2>
+    <p>If all tests pass, you're ready to deploy to GitHub Pages!</p>
+    <a href="index.html"><button>Open TipJar App</button></a>
+  </div>
+
+  <script>
+    function calculateHourlyRate(totalAmount, totalHours) {
+      if (totalHours === 0) return 0;
+      const hourlyRate = totalAmount / totalHours;
+      const hourlyRateStr = hourlyRate.toString();
+      const decimalIndex = hourlyRateStr.indexOf('.');
+      if (decimalIndex === -1) return hourlyRate;
+      const twoDecimalPlaces = hourlyRateStr.substring(0, decimalIndex + 3);
+      return parseFloat(twoDecimalPlaces);
+    }
+
+    function calculateBillBreakdown(amount) {
+      const bills = [20, 10, 5, 1];
+      const breakdown = [];
+      let remaining = amount;
+      
+      for (const bill of bills) {
+        if (remaining >= bill) {
+          const quantity = Math.floor(remaining / bill);
+          breakdown.push({ denomination: bill, quantity });
+          remaining -= quantity * bill;
+        }
+      }
+      
+      return breakdown;
+    }
+
+    function testCalculation() {
+      const result = document.getElementById('test1-result');
+      try {
+        const partners = [
+          { name: 'John Smith', hours: 8.5 },
+          { name: 'Jane Doe', hours: 7.25 },
+          { name: 'Mike Johnson', hours: 6.0 }
+        ];
+        
+        const totalAmount = 100;
+        const totalHours = partners.reduce((sum, p) => sum + p.hours, 0);
+        const hourlyRate = calculateHourlyRate(totalAmount, totalHours);
+        
+        result.innerHTML = `
+          <div class="success">✅ Test Passed!</div>
+          <p><strong>Total Hours:</strong> ${totalHours}</p>
+          <p><strong>Hourly Rate:</strong> $${hourlyRate.toFixed(2)}</p>
+          <p><strong>Partners:</strong> ${partners.length}</p>
+        `;
+      } catch (error) {
+        result.innerHTML = `<div class="error">❌ Test Failed: ${error.message}</div>`;
+      }
+    }
+
+    function testBillBreakdown() {
+      const result = document.getElementById('test2-result');
+      try {
+        const testAmounts = [47, 83, 15, 100];
+        let output = '<div class="success">✅ Test Passed!</div>';
+        
+        testAmounts.forEach(amount => {
+          const breakdown = calculateBillBreakdown(amount);
+          const bills = breakdown.map(b => `${b.quantity}×$${b.denomination}`).join(', ');
+          output += `<p><strong>$${amount}:</strong> ${bills}</p>`;
+        });
+        
+        result.innerHTML = output;
+      } catch (error) {
+        result.innerHTML = `<div class="error">❌ Test Failed: ${error.message}</div>`;
+      }
+    }
+
+    function testHourlyRate() {
+      const result = document.getElementById('test3-result');
+      try {
+        const tests = [
+          { amount: 100, hours: 21.75, expected: 4.59 },
+          { amount: 150, hours: 30, expected: 5.00 },
+          { amount: 87.50, hours: 18.25, expected: 4.79 }
+        ];
+        
+        let output = '<div class="success">✅ Test Passed!</div>';
+        let allPassed = true;
+        
+        tests.forEach(test => {
+          const rate = calculateHourlyRate(test.amount, test.hours);
+          const passed = Math.abs(rate - test.expected) < 0.01;
+          if (!passed) allPassed = false;
+          
+          output += `
+            <p>
+              <strong>$${test.amount} ÷ ${test.hours}h:</strong> 
+              $${rate.toFixed(2)} 
+              ${passed ? '✅' : '❌ Expected: $' + test.expected}
+            </p>
+          `;
+        });
+        
+        if (!allPassed) {
+          output = '<div class="error">❌ Some tests failed</div>' + output;
+        }
+        
+        result.innerHTML = output;
+      } catch (error) {
+        result.innerHTML = `<div class="error">❌ Test Failed: ${error.message}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>

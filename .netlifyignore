@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build files (will be rebuilt)
+dist/
+
+# Development files
+.vscode/
+.DS_Store
+
+# Documentation files (not needed for deployment)
+*.md
+!README.md
+docs/
+attached_assets/
+
+# Test files
+server/test-*.ts
+server/debug-*.ts
+server/check-*.ts
+
+# Vercel specific files
+.vercel/
+.vercelignore
+vercel.json
+api/index.js
+
+# Git
+.git/
+.gitignore
+
+# Other
+*.log
+*.tar.gz
+update-project/
+

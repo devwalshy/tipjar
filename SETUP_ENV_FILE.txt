@@ -1,0 +1,45 @@
+========================================
+CREATE YOUR .env FILE
+========================================
+
+STEP 1: Create a new file in the root directory named:  .env
+
+STEP 2: Copy and paste the following content into that file:
+
+========================================
+
+OCR_ENGINE=azure
+AZURE_DI_KEY=YOUR_DOCUMENT_INTELLIGENCE_KEY_HERE
+AZURE_DI_ENDPOINT=YOUR_DOCUMENT_INTELLIGENCE_ENDPOINT_HERE
+
+# Legacy Computer Vision variables (still supported for backwards compatibility)
+# AZURE_CV_KEY=YOUR_LEGACY_COMPUTER_VISION_KEY
+# AZURE_CV_ENDPOINT=YOUR_LEGACY_COMPUTER_VISION_ENDPOINT
+
+========================================
+
+STEP 3: Replace YOUR_DOCUMENT_INTELLIGENCE_KEY_HERE with your actual API key
+        Replace YOUR_DOCUMENT_INTELLIGENCE_ENDPOINT_HERE with your actual endpoint
+
+STEP 4: Save the file
+
+STEP 5: Run the test:
+npm run test:azure
+
+========================================
+
+WHAT IS DOCUMENT INTELLIGENCE?
+Azure AI Document Intelligence (formerly Form Recognizer) provides:
+- 95-98% accuracy on tables (vs 88-92% for Computer Vision)
+- Better understanding of document structure
+- Specifically designed for forms and tables
+- Same pricing as Computer Vision (500 free pages/month)
+
+GET YOUR CREDENTIALS:
+1. Go to: https://portal.azure.com
+2. Create a "Document Intelligence" resource (or "Form Recognizer")
+3. Go to "Keys and Endpoint" section
+4. Copy KEY 1 and ENDPOINT
+
+That's it! Azure Document Intelligence is now configured.
+
