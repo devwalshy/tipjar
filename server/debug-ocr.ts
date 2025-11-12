@@ -14,8 +14,12 @@ const __dirname = path.dirname(__filename);
 
 async function debugOCR() {
   console.log('=== OCR Debug Mode ===\n');
-  
+
   const assetsDir = path.join(__dirname, '..', 'attached_assets');
+  if (!fs.existsSync(assetsDir)) {
+    console.warn('No attached_assets directory found; add sample images to run OCR debugging.');
+    return;
+  }
   const imageFiles = fs.readdirSync(assetsDir)
     .filter(file => /\.(png|jpg|jpeg)$/i.test(file));
   

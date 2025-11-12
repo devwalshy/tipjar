@@ -12,7 +12,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function checkPartners() {
-  const imagePath = path.join(__dirname, '..', 'attached_assets', 'image_1745970494367.png');
+  const imagePath = path.join(
+    __dirname,
+    '..',
+    'attached_assets',
+    'image_1745970494367.png'
+  );
+
+  if (!fs.existsSync(imagePath)) {
+    console.warn('Sample image not found; add an image to attached_assets to run this check.');
+    return;
+  }
+
   const imageBuffer = fs.readFileSync(imagePath);
   
   console.log('Extracting OCR text from image...\n');

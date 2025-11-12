@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No image file provided" });
       }
       
-      // Use OCR service (Mindee primary, Tesseract fallback)
+      // Use OCR service (Azure Document Intelligence primary, Tesseract fallback)
       const result = await analyzeImageWithService(req.file.buffer);
       
       if (!result.text || !result.partnerData || result.partnerData.length === 0) {
