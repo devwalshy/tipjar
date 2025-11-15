@@ -28,10 +28,13 @@ export async function analyzeImageWithService(
   imageBuffer: Buffer,
   preferredEngine?: OCREngine
 ): Promise<OCRServiceResult> {
-  const envEngine = (process.env.OCR_ENGINE as OCREngine | undefined) || 'auto';
-  const engine = preferredEngine || envEngine;
+  const rawEngine =
+    (preferredEngine as string | undefined) || process.env.OCR_ENGINE || 'auto';
+  const engine = normalizeEngine(rawEngine);
 
-  console.log(`OCR Service: Using engine strategy '${engine}'`);
+  console.log(
+    `OCR Service: Using engine strategy '${engine}' (normalized from '${rawEngine}')`
+  );
 
   if (engine === 'auto') {
     return await tryAutoMode(imageBuffer);
@@ -46,6 +49,41 @@ export async function analyzeImageWithService(
   }
 
   return await tryTesseract(imageBuffer);
+}
+
+function normalizeEngine(engine: string): OCREngine {
+  const normalized = engine.trim().toLowerCase();
+
+  if (normalized === 'auto') {
+    return 'auto';
+  }
+
+  if (
+    [
+      'azure',
+      'azure_document_intelligence',
+      'azure-document-intelligence',
+      'mindee',
+      'deepseek',
+      'cloud',
+    ].includes(normalized)
+  ) {
+    if (normalized !== 'azure') {
+      console.warn(
+        `OCR Service: Normalizing legacy engine '${engine}' to 'azure'.`
+      );
+    }
+    return 'azure';
+  }
+
+  if (['tesseract', 'local'].includes(normalized)) {
+    return 'tesseract';
+  }
+
+  console.error(
+    `OCR Service: Unrecognized OCR engine '${engine}', defaulting to Azure.`
+  );
+  return 'azure';
 }
 
 /**
