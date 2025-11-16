@@ -1,214 +1,145 @@
 /**
- * Azure AI Document Intelligence OCR implementation
- * Uses Azure's Document Intelligence (Form Recognizer) for superior table extraction
+ * Azure Computer Vision OCR implementation using the Read API
  */
 
-interface AzureOCRResult {
+import fetch from 'node-fetch';
+
+export interface AzureOCRResult {
   text: string | null;
-  partnerData?: Array<{ name: string; hours: number }>;
   confidence?: number;
   error?: string;
 }
 
-interface TableCell {
-  rowIndex: number;
-  columnIndex: number;
-  content: string;
-}
-
-interface DocumentTable {
-  rowCount: number;
-  columnCount: number;
-  cells: TableCell[];
-}
-
 /**
- * Analyze an image using Azure AI Document Intelligence
+ * Analyze an image using Azure Computer Vision Read API
  * @param imageBuffer The image buffer
- * @returns OCR result with extracted text and partner data
+ * @returns OCR result with extracted text and confidence
  */
 export async function analyzeImageWithAzure(imageBuffer: Buffer): Promise<AzureOCRResult> {
   try {
-    // Support both old (CV) and new (DI) environment variables
-    const apiKey = process.env.AZURE_DI_KEY || process.env.AZURE_CV_KEY;
-    const endpoint = process.env.AZURE_DI_ENDPOINT || process.env.AZURE_CV_ENDPOINT;
-    
-    if (!apiKey || !endpoint) {
+    const endpoint = process.env.AZURE_CV_ENDPOINT;
+    const apiKey = process.env.AZURE_CV_KEY;
+
+    if (!endpoint || !apiKey) {
       console.log('Azure credentials not configured, skipping Azure OCR');
       return {
         text: null,
-        error: 'Azure Document Intelligence not configured'
+        error: 'Azure Computer Vision not configured. Set AZURE_CV_ENDPOINT and AZURE_CV_KEY environment variables.'
       };
     }
-    
-    console.log('Starting Azure Document Intelligence OCR...');
-    
-    // Step 1: Submit document for analysis using prebuilt-layout model
-    const analyzeUrl = `${endpoint}/formrecognizer/documentModels/prebuilt-layout:analyze?api-version=2023-07-31`;
-    
-    const analyzeResponse = await fetch(analyzeUrl, {
+
+    console.log('Using Azure Computer Vision OCR...');
+
+    // Step 1: Submit image for analysis
+    const analyzeUrl = `${endpoint}/vision/v3.2/read/analyze`;
+
+    const submitResponse = await fetch(analyzeUrl, {
       method: 'POST',
       headers: {
         'Ocp-Apim-Subscription-Key': apiKey,
-        'Content-Type': 'application/octet-stream'
+        'Content-Type': 'application/octet-stream',
       },
-      body: imageBuffer as any  // Buffer is compatible with fetch body
+      body: imageBuffer,
     });
-    
-    if (!analyzeResponse.ok) {
-      const errorText = await analyzeResponse.text();
-      console.error('Azure DI analyze error:', analyzeResponse.status, errorText);
+
+    if (!submitResponse.ok) {
+      const errorText = await submitResponse.text();
+      console.error('Azure OCR submission error:', submitResponse.status, errorText);
       return {
         text: null,
-        error: `Azure Document Intelligence failed: ${analyzeResponse.status}`
+        error: `Azure OCR failed: ${submitResponse.status} ${submitResponse.statusText}`,
       };
     }
-    
-    // Get the operation location URL
-    const operationLocation = analyzeResponse.headers.get('Operation-Location');
+
+    // Get the operation location from response headers
+    const operationLocation = submitResponse.headers.get('Operation-Location');
     if (!operationLocation) {
       return {
         text: null,
-        error: 'No operation location returned from Azure'
+        error: 'Azure OCR: No operation location returned',
       };
     }
-    
-    console.log('Azure DI: Analysis submitted, waiting for results...');
-    
+
     // Step 2: Poll for results
+    let result = null;
     let attempts = 0;
-    const maxAttempts = 30;
-    
+    const maxAttempts = 15;
+
     while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms between polls
-      
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
       const resultResponse = await fetch(operationLocation, {
+        method: 'GET',
         headers: {
-          'Ocp-Apim-Subscription-Key': apiKey
-        }
+          'Ocp-Apim-Subscription-Key': apiKey,
+        },
       });
-      
+
       if (!resultResponse.ok) {
         const errorText = await resultResponse.text();
-        console.error('Azure DI result error:', resultResponse.status, errorText);
+        console.error('Azure OCR result error:', resultResponse.status, errorText);
         return {
           text: null,
-          error: `Azure DI result failed: ${resultResponse.status}`
+          error: `Azure OCR result failed: ${resultResponse.status}`,
         };
       }
-      
-      const result = await resultResponse.json();
-      
-      if (result.status === 'succeeded') {
-        console.log('Azure DI: Analysis succeeded');
-        
-        // Extract tables and text
-        const extractedData = extractTableData(result.analyzeResult);
-        
-        if (extractedData.text) {
-          console.log(`Azure DI: Extracted ${extractedData.text.length} characters`);
-          console.log(`Azure DI: Found ${extractedData.tableCount} tables`);
-        }
-        
-        return {
-          text: extractedData.text,
-          confidence: 95 // Document Intelligence has very high confidence for structured documents
-        };
-      } else if (result.status === 'failed') {
-        console.error('Azure DI failed:', result);
+
+      const resultData = await resultResponse.json() as any;
+
+      if (resultData.status === 'succeeded') {
+        result = resultData;
+        break;
+      } else if (resultData.status === 'failed') {
         return {
           text: null,
-          error: 'Azure Document Intelligence analysis failed'
+          error: 'Azure OCR processing failed',
         };
       }
-      
+
       attempts++;
     }
-    
+
+    if (!result) {
+      return {
+        text: null,
+        error: 'Azure OCR timeout - processing took too long',
+      };
+    }
+
+    // Step 3: Extract text from result
+    const readResults = result.analyzeResult?.readResults || [];
+    let extractedText = '';
+    let totalConfidence = 0;
+    let lineCount = 0;
+
+    for (const page of readResults) {
+      for (const line of page.lines) {
+        extractedText += line.text + '\n';
+        totalConfidence += line.confidence || 1.0;
+        lineCount++;
+      }
+    }
+
+    const avgConfidence = lineCount > 0 ? (totalConfidence / lineCount) * 100 : 0;
+
+    if (!extractedText.trim()) {
+      return {
+        text: null,
+        error: 'Azure OCR: No text extracted from image',
+      };
+    }
+
+    console.log(`Azure OCR successful: ${extractedText.length} characters, ${avgConfidence.toFixed(1)}% confidence`);
+
     return {
-      text: null,
-      error: 'Azure Document Intelligence timeout'
+      text: extractedText.trim(),
+      confidence: avgConfidence,
     };
-    
   } catch (error) {
-    console.error('Azure DI error:', error);
+    console.error('Azure OCR error:', error);
     return {
       text: null,
-      error: `Azure DI exception: ${error instanceof Error ? error.message : 'Unknown error'}`
+      error: 'Azure OCR processing error',
     };
   }
 }
-
-/**
- * Extract table data from Document Intelligence result
- * Converts structured tables into text format compatible with our parser
- */
-function extractTableData(analyzeResult: any): { text: string; tableCount: number } {
-  const lines: string[] = [];
-  let tableCount = 0;
-  
-  // Extract tables first (priority for structured data)
-  if (analyzeResult.tables && analyzeResult.tables.length > 0) {
-    for (const table of analyzeResult.tables) {
-      tableCount++;
-      const tableText = convertTableToText(table);
-      if (tableText) {
-        lines.push(tableText);
-      }
-    }
-  }
-  
-  // ALWAYS include full content as well to catch any data tables might miss
-  if (analyzeResult.content) {
-    lines.push(analyzeResult.content);
-  } else if (analyzeResult.paragraphs) {
-    // Fallback to paragraphs
-    for (const paragraph of analyzeResult.paragraphs) {
-      if (paragraph.content) {
-        lines.push(paragraph.content);
-      }
-    }
-  }
-  
-  return {
-    text: lines.join('\n'),
-    tableCount
-  };
-}
-
-/**
- * Convert structured table to text format
- * Formats as: "StoreNumber  Name  PartnerID  Hours" per row
- */
-function convertTableToText(table: DocumentTable): string {
-  const rows: Map<number, Map<number, string>> = new Map();
-  
-  // Organize cells by row and column
-  for (const cell of table.cells) {
-    if (!rows.has(cell.rowIndex)) {
-      rows.set(cell.rowIndex, new Map());
-    }
-    rows.get(cell.rowIndex)!.set(cell.columnIndex, cell.content.trim());
-  }
-  
-  // Convert rows to text lines
-  const textLines: string[] = [];
-  const sortedRowIndices = Array.from(rows.keys()).sort((a, b) => a - b);
-  
-  for (const rowIndex of sortedRowIndices) {
-    const rowData = rows.get(rowIndex)!;
-    const sortedColIndices = Array.from(rowData.keys()).sort((a, b) => a - b);
-    
-    // Join columns with spaces (maintains structure)
-    const rowText = sortedColIndices
-      .map(colIndex => rowData.get(colIndex) || '')
-      .join('    '); // Use 4 spaces to separate columns
-    
-    if (rowText.trim()) {
-      textLines.push(rowText);
-    }
-  }
-  
-  return textLines.join('\n');
-}
-

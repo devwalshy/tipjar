@@ -94,7 +94,7 @@ TipJar is configured for easy deployment to [Netlify](https://www.netlify.com/) 
 
 3. **Set Environment Variables:**
    - Go to Site settings → Environment variables
-   - Add: `SESSION_SECRET`, `AZURE_DI_KEY`, `AZURE_DI_ENDPOINT`, `OCR_ENGINE=auto`
+   - Add: `SESSION_SECRET`, `AZURE_CV_KEY`, `AZURE_CV_ENDPOINT`
 
 4. **Deploy** - Netlify will build and deploy automatically!
 

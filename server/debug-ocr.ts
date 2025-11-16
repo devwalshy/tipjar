@@ -1,13 +1,13 @@
 /**
  * Debug script to see raw OCR output
- * Shows exactly what text Tesseract extracts
+ * Shows exactly what text Azure Computer Vision extracts
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { preprocessImage, preprocessForTable } from './lib/imagePreprocessor';
-import { performOCR } from './lib/ocrConfig';
+import { preprocessForTable } from './lib/imagePreprocessor';
+import { analyzeImageWithService } from './lib/ocrService';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,10 +30,15 @@ async function debugOCR() {
       const imagePath = path.join(assetsDir, imageFile);
       const imageBuffer = fs.readFileSync(imagePath);
       
-      // Try table-optimized preprocessing
+      // Try table-optimized preprocessing before sending to Azure
       console.log('\n--- Table-Optimized Preprocessing ---');
       const processed = await preprocessForTable(imageBuffer);
-      const text = await performOCR(processed);
+      const { text, error } = await analyzeImageWithService(processed);
+
+      if (!text) {
+        console.error('Azure OCR failed:', error);
+        continue;
+      }
       
       console.log('\nRaw OCR Text:');
       console.log('─'.repeat(60));
@@ -87,10 +92,6 @@ async function debugOCR() {
       console.error('Error:', error);
     }
   }
-  
-  // Cleanup
-  const { terminateOCRWorker } = await import('./lib/ocrConfig');
-  await terminateOCRWorker();
   
   console.log('\n\n' + '='.repeat(60));
   console.log('Debug complete');

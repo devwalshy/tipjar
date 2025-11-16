@@ -9,14 +9,13 @@ Your TipJar app is now live on Vercel!
 - **Production:** https://tipjar-sbux.vercel.app
 - **Latest Preview:** https://tipjar-sbux-9qkeglc27-devwalshy.vercel.app
 
-### 🔐 Environment Variables Set
+### 🔐 Environment Variables Needed
 
-All environment variables have been configured in production:
+Make sure these variables are configured in Vercel:
 
-- ✅ `AZURE_DI_KEY` - Your Azure Document Intelligence API Key
-- ✅ `AZURE_DI_ENDPOINT` - https://sbux-tips.cognitiveservices.azure.com
+- ✅ `AZURE_CV_KEY` - Your Azure Computer Vision API Key
+- ✅ `AZURE_CV_ENDPOINT` - Your Azure Computer Vision endpoint URL
 - ✅ `SESSION_SECRET` - Secure session secret
-- ✅ `OCR_ENGINE` - Set to "auto" (tries Azure first, falls back to Tesseract)
 
 ### 📝 What Was Done
 

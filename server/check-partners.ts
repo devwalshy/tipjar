@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { preprocessForTable } from './lib/imagePreprocessor';
-import { performOCR } from './lib/ocrConfig';
+import { analyzeImageWithService } from './lib/ocrService';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +17,12 @@ async function checkPartners() {
   
   console.log('Extracting OCR text from image...\n');
   const processed = await preprocessForTable(imageBuffer);
-  const text = await performOCR(processed);
+  const { text, error } = await analyzeImageWithService(processed);
+
+  if (!text) {
+    console.error('Azure OCR failed:', error);
+    return;
+  }
   
   console.log('FULL OCR TEXT:');
   console.log('='.repeat(80));
@@ -39,9 +44,6 @@ async function checkPartners() {
     console.log(`  ${i + 1}. ${line.trim()}`);
   });
   
-  // Cleanup
-  const { terminateOCRWorker } = await import('./lib/ocrConfig');
-  await terminateOCRWorker();
 }
 
 checkPartners().catch(error => {
